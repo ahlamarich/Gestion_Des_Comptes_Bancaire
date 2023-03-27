@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+       layout:decorate="templete2">
+<head>
+    <meta charset="UTF-8">
+    <title>Votre Banque</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="offcanvas.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css">
+
+</head>
+<body>
+
+
+
+<!-- creation de body HTML -->
+<div layout:fragment="content1">
+    <br>
+    <br>
+    <br>
+
+    <div class="row">
+        <div class="col-sm-6">
+        <div class="card card-primary" style="width: 30rem;">
+            <div class="card-header  text-white"style="background-color:#8ed2ce;">Consultation d'un Compte</div>
+            <div class="card-body">
+                <form th:action="@{/consulterCompte}" method="get">
+                    <div>
+                        <label>Code de compte :</label>
+                        <input type="text" name="codeCt"/>
+                        <button type="submit" class="btn btn text-white"style="background-color:#8ed2ce; ">Ok</button>
+                    </div>
+
+                </form>
+                <!--Afficher msg d'erreur-->
+                <div class="text-danger" th:if="${exception}" th:text="${exception.message}">
+
+                </div>
+
+            </div>
+        </div>
+        </div>
+
+        <!--  operation sur compte-->
+        <div class="col-md-6 " >
+            <div class="card card-primary" style="width: 30rem;" th:if="${compte}" sec:authorize="hasRole('ROLE_ADMIN')">
+                <div class="card-header  text-white"style="background-color:#8ed2ce;">Operation sur le Compte</div>
+                <div class="card-body">
+                    <form th:action="@{/saveOperation}" method="post">
+                        <div>
+                            <label>Compte :</label>
+                            <input type="hidden" name="codeCt" th:value="${compte.codeCt}"/>
+                            <label th:text="${compte.codeCt}"></label>
+                        </div>
+
+                        <div>
+                            <input type="radio" name="typeOperation" value="VERS" checked="checked"
+                                   onchange="document.getElementById('forVirement').style.display='none'">
+                            <label>Vercement</label>
+                            <input type="radio" name="typeOperation" value="RET"
+                                   onchange="document.getElementById('forVirement').style.display='none'">
+                            <label>Retrait</label>
+                            <input type="radio" name="typeOperation" value="VIR"
+                                   onchange="document.getElementById('forVirement').style.display='block'">
+                            <label>Virement</label>
+
+                        </div>
+                        <div id="forVirement" style="display:none">
+                            <label>Vers:</label>
+                            <input type="text" name="codeCt2"/>
+                        </div>
+                        <div>
+                            <label>Montant:</label>
+                            <input type="text" name="montant"/>
+                        </div>
+                        <!--Afficher msg d'erreur-->
+                        <div class="text-danger" th:text="${#httpServletRequest.getParameter('error')}">
+
+                        </div>
+                        <button type="submit" class="btn btn text-white"style="background-color:#8ed2ce;" >Enregistrer</button>
+                    </form>
+                    <div class="text-danger" th:text="${#httpServletRequest.getParameter('error')}">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row">
+      <div class="col-md-6">
+        <div class="card card-primary" th:if="${compte}" style="width: 30rem;">
+          <div class="card-header  text-white"style="background-color:#8ed2ce;">Information sur le Compte</div>
+            <div class="card-body">
+                <div>
+                    <label>Client:</label>
+                    <label th:text="${compte.client.nomCL}"></label>
+                </div>
+                <div>
+                    <label>Code:</label>
+                    <label th:text="${compte.codeCt}"></label>
+                </div>
+                <div>
+                    <label>Solde:</label>
+                    <label th:text="${compte.solde}"></label>
+                </div>
+                <div>
+                    <label>Date De Création:</label>
+                    <label th:text="${compte.DTcreation}"></label>
+                </div>
+                <div>
+                    <label>Type:</label>
+                    <label th:text="${compte.class.simpleName}"></label>
+                </div>
+                <div th:if="${compte.class.simpleName=='CompteCourant'}">
+                    <label>Decouvert:</label>
+                    <label th:text="${compte.decouvert}"></label>
+                </div>
+                <div th:if="${compte.class.simpleName=='CompteEpagne'}">
+                    <label>Taux:</label>
+                    <label th:text="${compte.taux}"></label>
+                </div>
+
+            </div>
+
+        </div>
+      </div>
+
+
+
+
+<!-- liste des operation -->
+      <div class="col-md-6">
+        <div class="card card-primary" th:if="${compte}" style="width: 30rem;">
+            <div class="card-header  text-white"style="background-color:#8ed2ce;">Liste des Operation</div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Num</th><th>Type</th><th>Date</th><th>Montant</th>
+                    </tr>
+                    <tr th:each="o:${ListOperation}">
+                        <td th:text="${o.numOperation}"></td>
+                        <td th:text="${o.class.simpleName}"></td>
+                        <td th:text="${o.dateOperation}"></td>
+                        <td th:text="${o.montant}"></td>
+
+                    </tr>
+
+                </table>
+                <div class="container">
+                    <ul class="nav nav-pills">
+                        <li th:each="p,status:${pages}">
+                            <a class="btn btn-outline-secondary m-lg-1" th:class="${status.index==Currentpages?'btn btn-secondary ms-1':'btn btn-outline-secondary ms-1'}" th:href="@{/consulterCompte(codeCt=${codeCt},page=${status.index})}" th:text="${status.index}"></a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+ </div>
+</div>
+</body>
+
+</html>

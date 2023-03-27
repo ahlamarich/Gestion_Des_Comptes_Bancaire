@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+       layout:decorate="templete2">
+<head>
+    <meta charset="UTF-8">
+    <title>Form Users</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.1.3/css/bootstrap.min.css">
+
+</head>
+<body>
+<div layout:fragment="content1">
+    <br>
+    <br>
+    <br>
+    <div class="col-md-6 offset-3">
+        <div class="card ">
+            <div class="card-header bg-primary text-white">Forms Des Users</div>
+            <div class="card-body">
+                <form method="post" th:action="@{/saveUser}" th:object="${utilisateurs}">
+                    <div >
+                        <label>Id</label>
+                        <input class="form-control" type="text" name="id" th:value="${utilisateurs.id}" >
+
+                    </div>
+                    <div >
+                        <label>Username</label>
+                        <input class="form-control" type="text" name="username" th:value="${utilisateurs.username}" th:errorClass="is-invalid"/>
+                        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="invalid-feedback"></div>
+                    </div>
+
+                    <div >
+                        <label>lastname</label>
+                        <input class="form-control" type="text" name="lastname" th:value="${utilisateurs.lastname}" th:errorClass="is-invalid">
+                        <div th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}" class="invalid-feedback"></div>
+
+                    </div>
+
+                    <div >
+                        <label>Email</label>
+                        <input class="form-control" type="text" name="email" th:value="${utilisateurs.email}" th:errorClass="is-invalid">
+                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback"></div>
+
+                    </div>
+
+                    <div >
+                        <label>Password</label>
+                        <input class="form-control" type="password" name="password" th:value="${utilisateurs.password}" th:errorClass="is-invalid">
+                        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback"></div>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Enregistre</button>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+</body>
+</html>

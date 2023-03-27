@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+       layout:decorate="templete2">
+<head>
+    <meta charset="UTF-8">
+    <title>Listes Des Users</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.1.3/css/bootstrap.min.css">
+
+</head>
+<body>
+<div layout:fragment="content1">
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="container mt-2">
+        <div class="card">
+            <div class="card-header">Liste Des Users</div>
+            <div class="card-body">
+                <form method="get" th:action="@{users}" >
+                    <label>key word</label>
+                    <input type="text" name="keyword" th:value="${keyword}"/>
+                    <button type="submit" class="btn btn-primary" >Chercher</button>
+
+                </form>
+
+                <a th:href="@{/showNewUser}" class="btn btn-success"style="float:right;" data-toggle="modal"><i class="bi bi-plus-circle"></i>    <span>Ajouter user</span></a>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Id</th><th>Username</th><th>Lastname</th><th>Email</th><th>Password</th><th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u:${listUsers}">
+                    <td th:text="${u.id}"></td>
+                    <td th:text="${u.username}"></td>
+                    <td th:text="${u.lastname}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.password}"></td>
+
+                    <td>
+
+                        <a onclick="return confirm('Etes vous sure ?')" class="btn btn-outline-danger" th:href="@{deleteuser(id=${u.id},keyword=${keyword},page=${Currentpages})}">  <i class="bi bi-trash3"></i></a>
+
+
+                        <a  class="btn btn-outline-warning" th:href="@{edituser(id=${u.id},keyword=${keyword},page=${Currentpages})}"><i class="bi bi-pencil-fill"></i></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <ul class="nav nav-pills">
+                <li th:each="page,status:${pages}">
+                    <a  class="btn btn-outline-primary m-lg-1"
+                        th:class="${status.index==Currentpages?'btn btn-primary ms-1':'btn btn-outline-primary ms-1'}"
+                        th:text="${status.index}"
+                        th:href="@{users(page=${status.index}, keyword=${keyword})}"></a>
+                </li>
+            </ul>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>
